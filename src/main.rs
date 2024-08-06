@@ -12,6 +12,7 @@ fn main() -> std::io::Result<()> {
         }
         "day2" => {
             day_02_part1();
+            day_02_part2();
         }
         _ => {}
     }

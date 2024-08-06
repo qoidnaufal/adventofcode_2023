@@ -69,7 +69,29 @@ struct Game {
     sets: Vec<Vec<Cube>>,
 }
 
-fn parse_input1(input: &str) -> Vec<Game> {
+impl Game {
+    fn find_max_cubes(&self) -> usize {
+        let mut red = Vec::new();
+        let mut green = Vec::new();
+        let mut blue = Vec::new();
+
+        self.sets.iter().for_each(|set| {
+            set.iter().for_each(|cube| match cube {
+                &Cube::Red(r) => red.push(r),
+                &Cube::Green(g) => green.push(g),
+                &Cube::Blue(b) => blue.push(b),
+            });
+        });
+
+        let max_red = red.iter().max().cloned().unwrap();
+        let max_green = green.iter().max().cloned().unwrap();
+        let max_blue = blue.iter().max().cloned().unwrap();
+
+        max_red * max_green * max_blue
+    }
+}
+
+fn parse_input(input: &str) -> Vec<Game> {
     input
         .lines()
         .map(|line| {
@@ -96,7 +118,7 @@ fn parse_input1(input: &str) -> Vec<Game> {
         .collect()
 }
 
-fn find_game(games: Vec<Game>) -> Vec<usize> {
+fn find_games(games: Vec<Game>) -> Vec<usize> {
     games
         .iter()
         .filter(|g| {
@@ -110,28 +132,36 @@ fn find_game(games: Vec<Game>) -> Vec<usize> {
                 })
             })
         })
-        .map(|g| {
-            println!("{:?}", g);
-            g.game_id
-        })
+        .map(|g| g.game_id)
         .collect::<Vec<_>>()
+}
+
+fn calculate_max_cubes(games: Vec<Game>) -> usize {
+    games.iter().map(|game| game.find_max_cubes()).sum()
 }
 
 pub fn day_02_part1() {
     let start = std::time::Instant::now();
-
-    let _test_input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
-Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
-Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
-
-    let games = parse_input1(INPUT);
-
-    let res = find_game(games).iter().sum::<usize>();
+    let games = parse_input(INPUT);
+    let res = find_games(games).iter().sum::<usize>();
 
     println!(
         "day 02 part 1: {:?}, time to process: {:?}",
+        res,
+        start.elapsed()
+    )
+}
+
+pub fn day_02_part2() {
+    let start = std::time::Instant::now();
+    let games = parse_input(INPUT);
+
+    let res = calculate_max_cubes(games);
+
+    // attempt 1: answer (2699) too low --> i forgot in game.find_max_cubes I didnt power the result, instead I added them
+
+    println!(
+        "day 02 part 2: {:?}, time to process: {:?}",
         res,
         start.elapsed()
     )
