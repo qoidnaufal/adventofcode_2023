@@ -65,11 +65,7 @@ fn parse_part_02(input: &str) -> Vec<usize> {
                 }
             }
 
-            let token = digits
-                .iter()
-                .filter(|d| d.is_some())
-                .map(|d| d.unwrap())
-                .collect::<Vec<_>>();
+            let token = digits.iter().flatten().cloned().collect::<Vec<_>>();
 
             let first = token.first().unwrap() * 10;
             let last = token.last().unwrap();
@@ -83,7 +79,7 @@ pub fn day_01_part2() {
     let start = std::time::Instant::now();
     let parsed_input = parse_part_02(INPUT);
 
-    let res = parsed_input.iter().sum::<usize>();
+    let res = parsed_input.iter().sum::<usize>(); // 54980
 
     println!(
         "day 01 part 2: {:?}, time to process: {:?}",

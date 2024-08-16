@@ -14,14 +14,10 @@ enum Cube {
 
 impl PartialOrd for Cube {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let comp = |n, m| {
-            if n > m {
-                Some(std::cmp::Ordering::Greater)
-            } else if n < m {
-                Some(std::cmp::Ordering::Less)
-            } else {
-                Some(std::cmp::Ordering::Equal)
-            }
+        let comp = |n: &usize, m: &usize| match n.cmp(m) {
+            std::cmp::Ordering::Greater => Some(std::cmp::Ordering::Greater),
+            std::cmp::Ordering::Equal => Some(std::cmp::Ordering::Equal),
+            std::cmp::Ordering::Less => Some(std::cmp::Ordering::Less),
         };
 
         match (self, other) {
@@ -76,16 +72,16 @@ impl Game {
         let mut blue = Vec::new();
 
         self.sets.iter().for_each(|set| {
-            set.iter().for_each(|cube| match cube {
-                &Cube::Red(r) => red.push(r),
-                &Cube::Green(g) => green.push(g),
-                &Cube::Blue(b) => blue.push(b),
+            set.iter().for_each(|cube| match *cube {
+                Cube::Red(r) => red.push(r),
+                Cube::Green(g) => green.push(g),
+                Cube::Blue(b) => blue.push(b),
             });
         });
 
-        let max_red = red.iter().max().cloned().unwrap();
-        let max_green = green.iter().max().cloned().unwrap();
-        let max_blue = blue.iter().max().cloned().unwrap();
+        let max_red = red.iter().max().unwrap();
+        let max_green = green.iter().max().unwrap();
+        let max_blue = blue.iter().max().unwrap();
 
         max_red * max_green * max_blue
     }
@@ -108,7 +104,7 @@ fn parse_input(input: &str) -> Vec<Game> {
 
             let mut sets = Vec::new();
 
-            while let Some(set) = token.next() {
+            for set in token {
                 let set = convert_into_set(set);
                 sets.push(set)
             }
